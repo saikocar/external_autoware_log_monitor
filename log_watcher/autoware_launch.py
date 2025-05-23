@@ -30,7 +30,7 @@ async def wait_for_autoware_launch_log() -> AsyncGenerator[str, None]:
         robot_state_publisher = False
         component_container = False
         topic_state_monitor_node = False
-        async for line in follow(file_path):
+        async for line in follow(file_path, 0.1):
             if 'component_container_mt-' in line:
                 component_container_mt = True
             elif 'robot_state_publisher-' in line:

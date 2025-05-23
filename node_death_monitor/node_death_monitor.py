@@ -16,7 +16,7 @@ async def node_death_monitor(path: str):
     async with open(Path(__file__).resolve().parent / 'ignore_node_list.txt') as f:
         ignore_nodes = [line.strip() for line in await f.readlines()]
 
-    async for line in follow(path):
+    async for line in follow(path, 0.1):
         if 'user interrupted with ctrl-c (SIGINT)' in line:
             logger.debug('detected user interrupt')
             break

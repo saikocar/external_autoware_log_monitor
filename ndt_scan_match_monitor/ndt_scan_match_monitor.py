@@ -20,7 +20,7 @@ async def play_notification_sound():
 async def ndt_scan_match_monitor(path: str):
     next_notification_time = 0.0
 
-    async for line in follow(path):
+    async for line in follow(path, 0.1):
         if 'Score is below the threshold' in line:
             current_time = time()
             if current_time >= next_notification_time:
