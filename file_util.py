@@ -1,4 +1,5 @@
 import io
+from asyncio import sleep
 from pathlib import PurePath
 from typing import AsyncGenerator
 
@@ -10,5 +11,4 @@ async def follow(file_path: PurePath | str) -> AsyncGenerator[str, None]:
         await f.seek(0, io.SEEK_END)
         while not f.closed:
             line = await f.readline()
-            if line:
-                yield line.strip()
+            (yield line.strip()) if line else (await sleep(0.01))
