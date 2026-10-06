@@ -4,11 +4,9 @@ from fnmatch import fnmatch
 from pathlib import Path
 
 from aiofiles import open
-from just_playback import Playback
-
 from file_util import follow
 from tts import play_speech
-from volume import get_volume
+from volume import make_playback
 
 
 async def node_death_monitor(path: str):
@@ -39,8 +37,7 @@ async def node_death_monitor(path: str):
             await play_speech(f'{node_name.replace("_", " ")} が異常終了しました')
         except Exception as e:
             logger.exception(e)
-            playback = Playback(str(Path(__file__).resolve().parent / 'node_died.mp3'))
-            playback.set_volume(get_volume())
+            playback = make_playback(str(Path(__file__).resolve().parent / 'node_died.mp3'))
             playback.play()
             while playback.active:
                 await sleep(0.01)

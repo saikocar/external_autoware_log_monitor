@@ -2,18 +2,15 @@ from asyncio import sleep
 from pathlib import Path
 from time import time
 
-from just_playback import Playback
-
 from file_util import follow
-from volume import get_volume
+from volume import make_playback
 
 NOTIFICATION_COOLDOWN = 10.0
 
 
 async def play_notification_sound():
     sound_path = str(Path(__file__).resolve().parent / 'bad_score.mp3')
-    playback = Playback(sound_path)
-    playback.set_volume(get_volume())
+    playback = make_playback(sound_path)
     playback.play()
     while playback.active:
         await sleep(0.01)

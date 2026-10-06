@@ -3,8 +3,7 @@ from asyncio.subprocess import DEVNULL, create_subprocess_exec
 
 from aiofiles.tempfile import NamedTemporaryFile
 from aiohttp import ClientSession
-from just_playback import Playback
-from volume import get_volume
+from volume import make_playback
 
 
 async def text_to_speech(text: str) -> bytes:
@@ -30,8 +29,7 @@ async def play_speech(text: str) -> None:
         await (await create_subprocess_exec('ffmpeg', '-i', f1.name, '-af', 'atempo=1.5', f2.name, '-y', stderr=DEVNULL)).communicate()
 
         print('DEBUG: playing text-to-speech')
-        playback = Playback(f2.name)
-        playback.set_volume(get_volume())
+        playback = make_playback(f2.name)
         playback.play()
         while playback.active:
             await sleep(0.01)
