@@ -5,6 +5,7 @@ from time import time
 from just_playback import Playback
 
 from file_util import follow
+from volume import get_volume
 
 NOTIFICATION_COOLDOWN = 10.0
 
@@ -12,6 +13,7 @@ NOTIFICATION_COOLDOWN = 10.0
 async def play_notification_sound():
     sound_path = str(Path(__file__).resolve().parent / 'bad_score.mp3')
     playback = Playback(sound_path)
+    playback.set_volume(get_volume())
     playback.play()
     while playback.active:
         await sleep(0.01)

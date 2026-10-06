@@ -172,3 +172,6 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# 音量の設定(実機ごとの値。brake_scale_webui が書く)
+volume.json

@@ -4,6 +4,7 @@ from asyncio.subprocess import DEVNULL, create_subprocess_exec
 from aiofiles.tempfile import NamedTemporaryFile
 from aiohttp import ClientSession
 from just_playback import Playback
+from volume import get_volume
 
 
 async def text_to_speech(text: str) -> bytes:
@@ -30,6 +31,7 @@ async def play_speech(text: str) -> None:
 
         print('DEBUG: playing text-to-speech')
         playback = Playback(f2.name)
+        playback.set_volume(get_volume())
         playback.play()
         while playback.active:
             await sleep(0.01)

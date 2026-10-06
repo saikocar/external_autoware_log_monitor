@@ -8,6 +8,7 @@ from just_playback import Playback
 
 from file_util import follow
 from tts import play_speech
+from volume import get_volume
 
 
 async def node_death_monitor(path: str):
@@ -39,6 +40,7 @@ async def node_death_monitor(path: str):
         except Exception as e:
             logger.exception(e)
             playback = Playback(str(Path(__file__).resolve().parent / 'node_died.mp3'))
+            playback.set_volume(get_volume())
             playback.play()
             while playback.active:
                 await sleep(0.01)
