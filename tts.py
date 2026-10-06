@@ -1,7 +1,5 @@
 from asyncio import sleep
 from asyncio.subprocess import DEVNULL, create_subprocess_exec
-from base64 import b64decode
-from urllib.parse import quote
 
 from aiofiles.tempfile import NamedTemporaryFile
 from aiohttp import ClientSession
@@ -9,14 +7,16 @@ from just_playback import Playback
 
 
 async def text_to_speech(text: str) -> bytes:
-    endpoint = 'https://www.google.com/async/translate_tts'
-    parameters = {'ttsp': f'tl:ja,txt:{quote(text)},spd:1', 'async': '_fmt:jspb'}
+    # 旧 www.google.com/async/translate_tts は2026-08時点で空応答を返すようになったため、
+    # mp3を直接返すtw-obエンドポイントを使用 (User-Agent必須、テキストは200文字程度まで)
+    endpoint = 'https://translate.google.com/translate_tts'
+    parameters = {'ie': 'UTF-8', 'q': text, 'tl': 'ja', 'client': 'tw-ob'}
+    headers = {'User-Agent': 'Mozilla/5.0'}
 
     async with ClientSession() as session:
-        async with session.get(endpoint, params=parameters) as response:
-            response_text = await response.text()
-
-    return b64decode(response_text.split('"')[3])
+        async with session.get(endpoint, params=parameters, headers=headers) as response:
+            response.raise_for_status()
+            return await response.read()
 
 
 async def play_speech(text: str) -> None:
@@ -28,6 +28,7 @@ async def play_speech(text: str) -> None:
         await f1.write(raw_audio_data)
         await (await create_subprocess_exec('ffmpeg', '-i', f1.name, '-af', 'atempo=1.5', f2.name, '-y', stderr=DEVNULL)).communicate()
 
+        print('DEBUG: playing text-to-speech')
         playback = Playback(f2.name)
         playback.play()
         while playback.active:
