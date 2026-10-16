@@ -17,12 +17,18 @@ Autoware のログ(`~/.ros/log/`)を見て、車内に警告の音声を流す(n
 
 そのノードを動かす機体では、このプログラムの NDT の音声を止める(二重に鳴らさない)。
 
+**Autoware を止めているときに行う。** Autoware の起動中にこのプログラムを restart すると、launch.log の見つけ方の都合で、
+その回は「異常終了しました」が鳴らなくなる(ergamio_software_docs/launch/startup_scripts.md の注意)。
+
 ```bash
 touch ~/external_autoware_log_monitor/ndt_voice_disabled            # 止める
 systemctl --user restart external_autoware_log_monitor
 journalctl --user -u external_autoware_log_monitor -n 5 | grep 'NDT score voice is disabled'   # 止まったことを確かめる
 ```
 
-戻すときは `ndt_voice_disabled` を消して restart。目印のファイルは git に入れない(.gitignore)。
-`ndt_voice_notifier` の診断は運転支援の必須項目につなぐ(`ergamio_extra_interface/tools/wire_ndt_voice_diag.py`)ので、
-ノードが止まれば運転支援を始められない(NDT の音声が鳴らないまま走ることはない)。
+戻すときも Autoware を止めてから、`ndt_voice_disabled` を消して restart(新しいノードを動かしたまま戻すと、範囲の中で二重に鳴る)。
+目印のファイルは git に入れない(.gitignore)。
+`ndt_voice_notifier` の診断は運転支援の必須項目(Lv2・Lv2B)につなぐ(`ergamio_extra_interface/tools/wire_ndt_voice_diag.py`)ので、
+ノードが止まる・音の出口(ava1)につながらないときは運転支援を始められない。ただし、ノードが動いていて NDT の一致度が届かないとき
+(NDT が照合を飛ばしている、話題の名前が違う)は鳴らない。そのときは診断の値 `score_age_sec` が大きくなり、ログに WARN が 1 回出る
+(これまでのプログラムも、NDT が照合を飛ばしているときは警告の行が出ないので鳴らなかった)。
