@@ -6,6 +6,7 @@ from watchfiles import DefaultFilter, Change
 from watchfiles import awatch
 
 from file_util import follow
+from log_watcher.watch_filters import ros_log_dir
 
 
 class FirstSeenFileFilter(DefaultFilter):
@@ -56,6 +57,6 @@ async def wait_for_autoware_launch_log() -> AsyncGenerator[str, None]:
                 create_task(worker(path))
 
     queue: Queue[str] = Queue()
-    create_task(producer(Path('~/.ros/log/').expanduser(), FirstSeenFileFilter(match_filenames=['launch.log', ])))
+    create_task(producer(ros_log_dir(), FirstSeenFileFilter(match_filenames=['launch.log', ])))
     while True:
         yield await queue.get()
