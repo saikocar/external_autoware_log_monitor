@@ -6,6 +6,7 @@ from pathlib import Path
 from aiofiles import open
 from file_util import follow
 from tts import play_speech
+from node_death_monitor.auto_restart import node_died
 from volume import make_playback
 
 
@@ -41,3 +42,5 @@ async def node_death_monitor(path: str):
             playback.play()
             while playback.active:
                 await sleep(0.01)
+        # 「異常終了しました」の後に、自動で再起動をかける(まとめと再起動の中身は auto_restart.py)
+        node_died(node_name)

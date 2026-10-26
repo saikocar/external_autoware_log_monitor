@@ -178,3 +178,6 @@ volume.json
 
 # 「NDT スコア低下」の音声を ROS のノード ndt_voice_notifier に移した機体だけに置く目印(README の「NDT の音声を移す」)
 ndt_voice_disabled
+
+# 自動の再起動を止める目印(試験・車庫用。node_death_monitor/auto_restart.py)
+auto_restart_disabled

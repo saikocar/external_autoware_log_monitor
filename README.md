@@ -5,6 +5,7 @@ Autoware のログ(`~/.ros/log/`)を見て、車内に警告の音声を流す(n
 | 音声 | 引き金 | 置き場 |
 |---|---|---|
 | 「<ノード名> が異常終了しました」「ノードが異常終了しました」 | launch.log の `process has died` | `node_death_monitor/` |
+| 「再起動をかけます。ハンドルメイン、ペダルメインを下げてください」ほか(2026-10-27) | 「異常終了しました」の後、5 秒のうちに落ちたものをまとめて、ergamio_vehicle_scripts の `nuvo/restart_autoware.sh --auto <最初に落ちたもの>` を `systemd-run --user --scope` で起こす。案内の音声・メインが下がるのを待つ・CONTEC の DIO の電源の入れ直し・10 分に 3 回の上限はそちら。音声は `say.py` で流す。このディレクトリに `auto_restart_disabled` があれば起こさない | `node_death_monitor/auto_restart.py` |
 | 「NDT スコア低下」 | NDT のログの `Score is below the threshold`(一致度がしきい値以下)。どの区間でも鳴らす | `ndt_scan_match_monitor/` |
 
 音量は `volume.json`(nuvo:8085 の画面が書く)。起動時に `INFO: version <git hash>` を出す。
