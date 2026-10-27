@@ -9,7 +9,7 @@ Autoware のログ(`~/.ros/log/`)を見て、車内に警告の音声を流す(n
 | 「<呼び名> の <コンテナ> が止まりました」「…が起動していません」(2026-10-27) | Autoware(nuvo の aw-main)が動いている間、5 秒ごとに ssh で ava2 の `podman ps`・ava1 の `docker ps` を見る。一度見えたものが 15 秒見えない →「止まりました」、aw-main を作って 3 分たっても見えない →「起動していません」。ava2 の認識のコンテナは続けて自動の再起動(上と同じ)、ava1 の Luminar は知らせるだけ。見張るものは `container_monitor/watch_list.txt` | `container_monitor/` |
 | 「NDT スコア低下」 | NDT のログの `Score is below the threshold`(一致度がしきい値以下)。どの区間でも鳴らす | `ndt_scan_match_monitor/` |
 
-**「Autoware を止める」で止めたときは、読み上げも自動の再起動もしない**(2026-10-27)。`kill_autoware.sh` が `/dev/shm/autoware_stopped_by_hand` を付け、次の起動(startup_*.sh の mains_down_guard.sh)が消す。
+**「Autoware停止」で止めたときは、読み上げも自動の再起動もしない**(2026-10-27)。`kill_autoware.sh` が `/dev/shm/autoware_stopped_by_hand` を付け、次の起動(startup_*.sh の mains_down_guard.sh)が消す。
 `restart_autoware.sh` が動いている間は `/dev/shm/autoware_restarting` があり、コンテナの見張りはその間知らせない(再起動で止めたコンテナを「止まった」と読まない)。
 
 音量は `volume.json`(nuvo:8085 の画面が書く)。起動時に `INFO: version <git hash>` を出す。
