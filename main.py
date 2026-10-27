@@ -7,6 +7,7 @@ from log_watcher.autoware_launch import wait_for_autoware_launch_log
 from log_watcher.ndt_scan_matcher import wait_for_ndt_scan_matcher_log
 from ndt_scan_match_monitor.ndt_scan_match_monitor import ndt_scan_match_monitor
 from node_death_monitor.node_death_monitor import node_death_monitor
+from container_monitor.container_monitor import container_monitor
 
 HERE = Path(__file__).resolve().parent
 # このファイルがあれば「NDT スコア低下」の音声を鳴らさない(ROS のノード ndt_voice_notifier に移したとき。README の「NDT の音声を移す」)
@@ -43,9 +44,9 @@ async def main():
     if NDT_VOICE_DISABLED_FLAG.exists():
         # 「NDT スコア低下」は ROS のノード ndt_voice_notifier が、LiDAR を主に使う区間の中と、その入口の手前でだけ鳴らす(本人 2026-10-16)
         print(f'INFO: NDT score voice is disabled here ({NDT_VOICE_DISABLED_FLAG.name} exists): ndt_voice_notifier plays it', flush=True)
-        await gather(monitor_node_death(), )
+        await gather(monitor_node_death(), container_monitor(), )
     else:
-        await gather(monitor_node_death(), monitor_matching_score(), )
+        await gather(monitor_node_death(), monitor_matching_score(), container_monitor(), )
 
 
 if __name__ == '__main__':

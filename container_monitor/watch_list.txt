@@ -1,0 +1,10 @@
+# 見張るコンテナ(2026-10-27)。1 行に: 機 ssh先 podman|docker 名前 処置(restart|notify) 読み上げの呼び名
+#   restart = 「<呼び名> の <名前> が止まりました」の後、Autoware ごと自動で再起動する(ノードが落ちたときと同じ restart_autoware.sh --auto)
+#   notify  = 読み上げるだけ
+# ava2 の認識のコンテナ。ava2 の ~/startup.sh が起こす(ペイン 1・2・3 と 5。ARS548 は 40 秒待ってから)
+ava2 sit@10.0.0.2 podman lidar-perception-container restart 認識のピーシー
+ava2 sit@10.0.0.2 podman modern-autoware-perception restart 認識のピーシー
+ava2 sit@10.0.0.2 podman radar-driver-and-tracker-container restart 認識のピーシー
+# ava1 の Luminar の推論(docker の restart=unless-stopped なので、落ちても docker が起こし直す。止まったままのときだけ知らせる)
+ava1 sit@10.0.1.2 docker luminar-bevfusion notify ルミナーの検出
+ava1 sit@10.0.1.2 docker luminar-centerpoint notify ルミナーの検出

@@ -9,6 +9,8 @@ from tts import play_speech
 from node_death_monitor.auto_restart import node_died
 from volume import make_playback
 
+STOP_FLAG = Path('/dev/shm/autoware_stopped_by_hand')
+
 
 async def node_death_monitor(path: str):
     logger = getLogger(__name__)
@@ -28,6 +30,11 @@ async def node_death_monitor(path: str):
             node_name = line[line.find('__node:=') + 8:].split(' ', 1)[0]
         else:
             node_name = line.split(' ', 4)[2][1:-2]
+
+        # 「Autoware を止める」(kill_autoware.sh)で止めている最中・止めた後に落ちたものは、読み上げも再起動もしない(2026-10-27)
+        if STOP_FLAG.exists():
+            logger.debug(f'stopped by hand, ignored: {node_name}')
+            continue
 
         if any([fnmatch(node_name, pattern) for pattern in ignore_nodes]):
             logger.debug(f'node ignored: {node_name}')
