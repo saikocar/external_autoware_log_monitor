@@ -1,3 +1,4 @@
+import re
 from logging import getLogger
 from asyncio import sleep
 from fnmatch import fnmatch
@@ -30,6 +31,8 @@ async def node_death_monitor(path: str):
             node_name = line[line.find('__node:=') + 8:].split(' ', 1)[0]
         else:
             node_name = line.split(' ', 4)[2][1:-2]
+            # launch の番号(lidar_air_wiper-56 の -56)を外す。読み上げで「ごじゅうろく」と読まれ、無視の一覧とも合わない(2026-10-27)
+            node_name = re.sub(r'-\d+$', '', node_name)
 
         # 「Autoware を止める」(kill_autoware.sh)で止めている最中・止めた後に落ちたものは、読み上げも再起動もしない(2026-10-27)
         if STOP_FLAG.exists():
